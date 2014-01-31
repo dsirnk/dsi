@@ -12,9 +12,6 @@ var fs = require('fs');
 var path = require('path');
 var glob = require('glob');
 var prettySize = require('prettysize');
-var zlib = require('zlib');
-var archiver = require('archiver');
-var Readable = require('lazystream').Readable;
 
 module.exports = function(grunt) {
 
@@ -52,102 +49,67 @@ module.exports = function(grunt) {
 		grunt.util.async.forEachSeries(this.files, function(filePair, nextPair) {
 			grunt.util.async.forEachSeries(filePair.src, function(src, nextFile) {
 
-				// console.log(filePair);
-
-				// Must be a file
+				// Must be a file else go to next file
 				if (grunt.file.isDir(src)) {
 					return nextFile();
 				} // else return;
 
-				var shouldGzip = false;
-
-				var archive = archiver.create('zip', exports.options);
-
 				var basepath = path.dirname(src);
 				var dest = src + '.zip';
+
 				// Where to write the file
 				var destStream = fs.createWriteStream(dest);
 
-				// var dest = filePair.dest;
-
-				// // Ensure dest folder exists
-				// grunt.file.mkdir(path.dirname(dest));
-
-				// // Where to write the file
-				// var destStream = fs.createWriteStream(dest);
-
-				var gzipStream;
-
-				archive.on('error', function(err) {
-					grunt.log.error(err);
-					grunt.fail.warn('Archiving failed.');
-				});
-
+				// In case error occurs during writing
 				destStream.on('error', function(err) {
 					grunt.log.error(err);
 					grunt.fail.warn('WriteStream failed.');
 				});
 
+				// On file close after writing
 				destStream.on('close', function() {
 					grunt.log.writeln('Created ' + String(dest).cyan + ' (' + exports.getSize(dest) + ')');
 					nextFile();
 				});
 
+				var archive = require('archiver').create('zip', exports.options);
+
+				// In case error occurs during archiving
+				archive.on('error', function(err) {
+					grunt.log.error(err);
+					grunt.fail.warn('Archiving failed.');
+				});
+
 				archive.pipe(destStream);
 
-				grunt.util.async.forEachSeries(filePair.images, function(pattern, nextPattern) {
+				// For each 'misc' type of files
+				grunt.util.async.forEachSeries(filePair.misc, function(pattern, nextPattern) {
+					// Expand the 'misc' regex and get the paths
 					glob(exports.unixifyPath(path.join(basepath || '', pattern)), function(er, expandedFiles) {
+						// add 'src' to the array, because it needs to be included in the final result
 						expandedFiles.unshift(src);
 
+						// For each file found + the 'src'
 						expandedFiles.forEach(function(file) {
 
-							var internalFileName = path.relative(basepath, file);
-							var srcStream = new Readable(function() {
+							// Read content of each file
+							var srcStream = new require('lazystream').Readable(function() {
 								return fs.createReadStream(file);
 							});
+							// Get relative path to this path
+							var internalFileName = path.relative(basepath, file);
 
+							// Add the file to the Archive with the name 'internalFileName'
 							archive.append(srcStream, { name: internalFileName }, function(err) {
 								grunt.verbose.writeln('Archiving ' + file.cyan + ' -> ' + String(dest).cyan + '/'.cyan + file.cyan);
 							});
 						});
+						// Go to next 'misc' pattern
 						nextPattern();
 					});
 				}, function() {
 					archive.finalize();
 				});
-
-				/**
-				// Append ext if the specified one isnt there
-				if (typeof filePair.orig.ext === 'undefined') {
-					var ext = '.' + extension;
-					// if the chosen ext is different then the dest ext lets use it
-					if (String(filePair.dest).slice(-ext.length) !== ext) {
-						filePair.dest += ext;
-					}
-				}
-				/**/
-
-				/**
-				// Ensure the dest folder exists
-				grunt.file.mkdir(path.dirname(filePair.dest));
-
-				var srcStream = fs.createReadStream(src);
-				var destStream = fs.createWriteStream(filePair.dest);
-				var compressor = algorithm.call(zlib, exports.options);
-
-				compressor.on('error', function(err) {
-				grunt.log.error(err);
-				grunt.fail.warn(algorithm + ' failed.');
-				nextFile();
-				});
-
-				destStream.on('close', function() {
-				grunt.log.writeln('Created ' + String(filePair.dest).cyan + ' (' + exports.getSize(filePair.dest) + ')');
-				nextFile();
-				});
-
-				srcStream.pipe(compressor).pipe(destStream);
-				/**/
 			}, nextPair);
 		}, this.async());
 

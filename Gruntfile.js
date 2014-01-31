@@ -39,7 +39,7 @@ module.exports = function (grunt) {
 				expand: true,
 				cwd: src,
 				src: [emails],
-				images: ['**/*.+(jpg|jpeg|gif|png)']
+				misc: ['**/*.+(jpg|jpeg|gif|png)']
 			}
 		},
 		watch: {
