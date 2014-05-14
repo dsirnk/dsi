@@ -104,7 +104,7 @@ module.exports = function (grunt) {
 		// grunt.config(['copy','devImg'], filepath);
 		switch(target) {
 			case 'emails': {
-				grunt.config(['exec', 'open', 'cmd'], 'open ' + filepath);
+				grunt.config(['exec', 'open', 'cmd'], 'open "' + filepath + '"');
 				grunt.config(['dsi', 'zip', 'cwd'], require('path').dirname(filepath));
 			}
 		}
