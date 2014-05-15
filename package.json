@@ -4,6 +4,7 @@
   "description": "Dynamic Source Injector",
   "main": "index.js",
   "scripts": {
+    "preinstall": "npm i -g casperjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ronak Desai",
@@ -21,7 +22,10 @@
     "load-grunt-tasks": "~0.2.0",
     "grunt-contrib-watch": "~0.5.3",
     "glob": "~3.2.8",
-    "grunt-contrib-compress": "~0.6.0"
+    "grunt-contrib-compress": "~0.6.0",
+    "phantomjs": "~1.9.7-5",
+    "grunt-phantomcss": "~0.2.3",
+    "underscore": "~1.6.0"
   },
   "peerDependencies": {
     "grunt": "~0.4.0"

@@ -10,9 +10,16 @@ module.exports = function (grunt) {
 
 		// My custom variables
 		src = 'src/',
-		emails = '**/*.+(htm|html)',
-		emailFiles = [src + '/' + emails],
-		zipFiles = src + '/**/*.+(htm|html).zip';
+
+		emails = 'emails/**/*.+(htm|html)',
+		emailFiles = src + '/' + emails,
+		zipFiles = emailFiles + '.zip',
+
+		screenfly = 'test/**/*screenfly.js',
+
+		shots = src + 'shots/',
+		lastShots = shots + 'base/',
+		resultShots = shots + 'results/';
 
 	// load all npm grunt tasks
 	require('load-grunt-tasks')(grunt);
@@ -26,7 +33,10 @@ module.exports = function (grunt) {
 				src: 'Gruntfile.js'
 			},
 			dsi: {
-				src: '**/*dsi.js',
+				src: 'tasks/**/*dsi.js',
+			},
+			phantomcss: {
+				src: screenfly,
 			},
 			all: ['*.js']
 		},
@@ -42,29 +52,67 @@ module.exports = function (grunt) {
 				misc: ['**/*.+(jpg|jpeg|gif|png)']
 			}
 		},
+
+		phantomcss: {
+			desktop: {
+				options: {
+					// url: 'http://rdesai:8022',
+					screenshots: lastShots + 'desktop/',
+					results: resultShots + 'desktop',
+					viewportSize: [1024, 768]
+				},
+				src: [screenfly]
+			},
+			mobile: {
+				options: {
+					// url: 'http://rdesai:8022',
+					screenshots: lastShots + 'mobile/',
+					results: resultShots + 'mobile',
+					viewportSize: [320, 480]
+				},
+				src: [screenfly]
+			}
+		},
+
 		watch: {
 			gruntfile: {
 				files: '<%= jshint.gruntfile.src %>',
-				tasks: ['jshint:gruntfile', 'dev'],
+				tasks: ['jshint:gruntfile'],
 				options: {
 					spawn: false
 				}
 			},
 			dsi: {
 				files: '<%= jshint.dsi.src %>',
-				tasks: ['jshint:dsi', 'dev'],
+				tasks: ['jshint:dsi', 'dsi'],
 				options: {
 					spawn: false
 				}
 			},
+			phantomcss: {
+				files: '<%= jshint.phantomcss.src %>',
+				tasks: ['jshint:phantomcss', 'phantomcss'],
+				options: {
+					//spawn: false
+				}
+			},
 			emails: {
-				files: emailFiles,
+				files: [emailFiles],
 				tasks: ['process'],
 				options: {
 					spawn: false
 				}
 			}
 		},
+
+		/* Grunt exec properties
+		__command:__ The shell command to be executed. Must be a string or a function that returns a string. (__alias:__ cmd)
+		__stdout:__ If true, stdout will be printed. Defaults to true.
+		__stderr:__ If true, stderr will be printed. Defaults to true.
+		__cwd:__ Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
+		__exitCode:__ The expected exit code, task will fail if the actual exit code doesn't match. Defaults to 0.
+		__callback:__ The callback function passed child_process.exec. Defaults to a noop.
+		*/
 
 		exec: {
 			open: {
@@ -113,20 +161,6 @@ module.exports = function (grunt) {
 	// Actually load this plugin's task(s).
 	grunt.loadTasks('tasks');
 
-	/*grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-compress');
-	grunt.loadNpmTasks('grunt-exec');*/
-
-	/* Grunt exec properties
-	__command:__ The shell command to be executed. Must be a string or a function that returns a string. (__alias:__ cmd)
-	__stdout:__ If true, stdout will be printed. Defaults to true.
-	__stderr:__ If true, stderr will be printed. Defaults to true.
-	__cwd:__ Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
-	__exitCode:__ The expected exit code, task will fail if the actual exit code doesn't match. Defaults to 0.
-	__callback:__ The callback function passed child_process.exec. Defaults to a noop.
-	*/
-
 	// By default, lint and run all tests.
 	grunt.registerTask(
 		'default',
@@ -135,12 +169,12 @@ module.exports = function (grunt) {
 	);
 	grunt.registerTask(
 		'process',
-		'Running "DEVELOPMENT", watching files and compiling...',
+		'Running "Process", watching files and compiling...',
 		['clean', 'dsi', 'exec:open', 'watch']
 	);
 	grunt.registerTask(
-		'dev',
-		'Running "DEVELOPMENT", watching files and compiling...',
-		['clean', 'exec:open', 'watch']
+		'screenshots',
+		'Running "Screenshots", watching files and compiling...',
+		['clean', 'phantomcss', 'watch']
 	);
 };
