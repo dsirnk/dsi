@@ -75,7 +75,7 @@ var startUrl = 'http://rdesai:8022/',
             phantomcss.turnOffAnimations();
             phantomcss.screenshot(
                 'body',
-                500,
+                0,
                 '#fixed-isi',
                 url.filename
             );

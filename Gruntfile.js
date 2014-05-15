@@ -9,7 +9,9 @@ module.exports = function (grunt) {
 				pkg.author.name + ';' + ' Licensed MIT */\n',
 
 		// My custom variables
-		emails = 'emails**/*.+(htm|html)',
+		projects = 'projects/**/*.+(css|js|htm|html|cshtml|gif|png|jpg|jpeg)',
+
+		emails = 'emails/**/*.+(htm|html)',
 		emailZips = emails + '.zip',
 
 		screenfly = 'test/**/*screenfly.js',
@@ -86,16 +88,23 @@ module.exports = function (grunt) {
 					spawn: false
 				}
 			},
+			emails: {
+				files: [emails],
+				tasks: ['emails'],
+				options: {
+					spawn: false
+				}
+			},
 			phantomcss: {
 				files: '<%= jshint.phantomcss.src %>',
 				tasks: ['jshint:phantomcss', 'phantomcss'],
 				options: {
-					//spawn: false
+					spawn: false
 				}
 			},
-			emails: {
-				files: [emails],
-				tasks: ['emails'],
+			projects: {
+				files: projects,
+				tasks: ['phantomcss'],
 				options: {
 					spawn: false
 				}
@@ -151,6 +160,11 @@ module.exports = function (grunt) {
 			case 'emails': {
 				grunt.config(['exec', 'open', 'cmd'], 'open "' + filepath + '"');
 				grunt.config(['emailer', 'zip', 'cwd'], require('path').dirname(filepath));
+				break;
+			}
+			case 'projects': {
+				grunt.log.subhead(filepath + ' updated');
+				break;
 			}
 		}
 	});
@@ -161,13 +175,13 @@ module.exports = function (grunt) {
 	// By default, lint and run all tests.
 	grunt.registerTask(
 		'default',
-		'Running "DEFAULT: jshint, clean, emailer, exec, watch"...',
-		['jshint:all', 'clean', 'exec', 'watch']
+		'Running "DEFAULT: jshint, clean, watch"...',
+		['jshint:all', 'clean', 'watch']
 	);
 	grunt.registerTask(
 		'emails',
 		'Running Emailer - zip and upload...',
-		['clean', 'emailer', 'exec:open', 'watch']
+		['clean', 'emailer', 'watch']
 	);
 	grunt.registerTask(
 		'screenshots',
