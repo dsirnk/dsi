@@ -1,4 +1,8 @@
-zeemail
-=======
+# DSI (Do Something Interesting)
 
-Emails processed dynamically and automatically
+> A boilerplate to instansiate some basic (custom) grunt tasks
+
+## Tasks included:
+
+- emailer (zip and upload)
+- screenfly (crawl, screenshot and diff)
