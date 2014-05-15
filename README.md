@@ -1,4 +1,4 @@
-# DSI (Do Something Interesting)
+# DSI (Do Something Interesting?? / Inovative?? / Impressing?? / ??)
 
 > A boilerplate to instansiate some basic (custom) grunt tasks
 

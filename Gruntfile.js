@@ -9,17 +9,14 @@ module.exports = function (grunt) {
 				pkg.author.name + ';' + ' Licensed MIT */\n',
 
 		// My custom variables
-		src = 'src/',
-
-		emails = 'emails/**/*.+(htm|html)',
-		emailFiles = src + '/' + emails,
-		zipFiles = emailFiles + '.zip',
+		emails = 'emails**/*.+(htm|html)',
+		emailZips = emails + '.zip',
 
 		screenfly = 'test/**/*screenfly.js',
 
-		shots = src + 'shots/',
-		lastShots = shots + 'base/',
-		resultShots = shots + 'results/';
+		screenshots = 'screenshots/',
+		lastShots = screenshots + 'base/',
+		resultShots = screenshots + 'results/';
 
 	// load all npm grunt tasks
 	require('load-grunt-tasks')(grunt);
@@ -32,8 +29,8 @@ module.exports = function (grunt) {
 			gruntfile: {
 				src: 'Gruntfile.js'
 			},
-			dsi: {
-				src: 'tasks/**/*dsi.js',
+			emailer: {
+				src: 'tasks/**/*emailer.js',
 			},
 			phantomcss: {
 				src: screenfly,
@@ -42,12 +39,12 @@ module.exports = function (grunt) {
 		},
 
 		// Before generating any new files, remove any previously-created files.
-		clean: [zipFiles],
+		clean: [emailZips],
 
-		dsi: {
+		emailer: {
 			zip: {
 				expand: true,
-				cwd: src,
+				cwd: '/',
 				src: [emails],
 				misc: ['**/*.+(jpg|jpeg|gif|png)']
 			}
@@ -82,9 +79,9 @@ module.exports = function (grunt) {
 					spawn: false
 				}
 			},
-			dsi: {
-				files: '<%= jshint.dsi.src %>',
-				tasks: ['jshint:dsi', 'dsi'],
+			emailer: {
+				files: '<%= jshint.emailer.src %>',
+				tasks: ['jshint:emailer', 'emailer'],
 				options: {
 					spawn: false
 				}
@@ -97,8 +94,8 @@ module.exports = function (grunt) {
 				}
 			},
 			emails: {
-				files: [emailFiles],
-				tasks: ['process'],
+				files: [emails],
+				tasks: ['emails'],
 				options: {
 					spawn: false
 				}
@@ -153,7 +150,7 @@ module.exports = function (grunt) {
 		switch(target) {
 			case 'emails': {
 				grunt.config(['exec', 'open', 'cmd'], 'open "' + filepath + '"');
-				grunt.config(['dsi', 'zip', 'cwd'], require('path').dirname(filepath));
+				grunt.config(['emailer', 'zip', 'cwd'], require('path').dirname(filepath));
 			}
 		}
 	});
@@ -164,17 +161,17 @@ module.exports = function (grunt) {
 	// By default, lint and run all tests.
 	grunt.registerTask(
 		'default',
-		'Running "DEFAULT: jshint, clean, dsi, exec, watch"...',
+		'Running "DEFAULT: jshint, clean, emailer, exec, watch"...',
 		['jshint:all', 'clean', 'exec', 'watch']
 	);
 	grunt.registerTask(
-		'process',
-		'Running "Process", watching files and compiling...',
-		['clean', 'dsi', 'exec:open', 'watch']
+		'emails',
+		'Running Emailer - zip and upload...',
+		['clean', 'emailer', 'exec:open', 'watch']
 	);
 	grunt.registerTask(
 		'screenshots',
-		'Running "Screenshots", watching files and compiling...',
+		'Taking Screenshots - crawl, screenshot and diff',
 		['clean', 'phantomcss', 'watch']
 	);
 };

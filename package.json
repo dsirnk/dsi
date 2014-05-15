@@ -1,8 +1,8 @@
 {
   "name": "DSI",
   "version": "0.0.1",
-  "description": "Dynamic Source Injector",
-  "main": "index.js",
+  "description": "Do Something Interesting / Inovative / Impressing",
+  "main": "Gruntfile.js",
   "scripts": {
     "preinstall": "npm i -g casperjs",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,5 +1,5 @@
 /*
- * DSI
+ * DSI - Emailer
  *
  *
  * Copyright (c) 2013 Ronak Desai
@@ -15,7 +15,7 @@ var prettySize = require('prettysize');
 
 module.exports = function(grunt) {
 
-	grunt.registerMultiTask('dsi', 'Compress files.', function() {
+	grunt.registerMultiTask('emailer', 'Compress files.', function() {
 		var exports = {
 			options: {
 				pretty: true
