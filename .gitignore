@@ -1,6 +1,7 @@
 *node_modules/
-*src/
-*dest/
-*emails/
-*screenshots/
+src/
+dest/
+emails/
+projects/
+screenshots/
 config.json
