@@ -1,6 +1,6 @@
-# DSI (Do Something Interesting?? / Inovative?? / Impressing?? / ??)
-
-> A boilerplate to instansiate some basic (custom) grunt tasks
+# DSI
+> (Do Something Interesting?? / Inovative?? / Impressing?? / ??)  
+> Basically this is a grunt task boilerplate to instansiate quick custom tasks
 
 ## Tasks included:
 
