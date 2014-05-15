@@ -1,5 +1,5 @@
 # DSI
-> (Do Something Interesting?? / Inovative?? / Impressing?? / ??)
+> (Do Something Interesting?? / Inovative?? / Impressing?? / ??)  
 > Basically this is a grunt task boilerplate to instansiate quick custom tasks
 
 ## Tasks included:
