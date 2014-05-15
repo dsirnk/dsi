@@ -12,8 +12,8 @@ module.exports = function (grunt) {
 
 		// My custom variables
 		win = process.platform === 'win32',
-		projects = 'projects/',
-		projectFiles = projects + '**/*.+(css|js|htm|html|cshtml|gif|png|jpg|jpeg)',
+		webistes = 'webistes/',
+		webisteFiles = webistes + '**/*.+(css|js|htm|html|cshtml|gif|png|jpg|jpeg)',
 
 		emails = 'emails/',
 		emailFiles = '**/*.+(htm|html)',
@@ -28,7 +28,6 @@ module.exports = function (grunt) {
 	// load all npm grunt tasks
 	require('load-grunt-tasks')(grunt);
 
-	// Project configuration.
 	grunt.initConfig({
 
 		// jsHint all js files
@@ -49,7 +48,7 @@ module.exports = function (grunt) {
 		clean: {
 			emails: [emailZips],
 			screenshots: [resultShots],
-			projects: [projects]
+			webistes: [webistes]
 		},
 
 		emailer: {
@@ -109,8 +108,8 @@ module.exports = function (grunt) {
 					spawn: false
 				}
 			},
-			projects: {
-				files: projectFiles,
+			webistes: {
+				files: webisteFiles,
 				tasks: ['phantomcss'],
 				options: {
 					spawn: false
@@ -135,10 +134,10 @@ module.exports = function (grunt) {
 				cmd: 'ls -l **'
 			},
 			symLink: {
-				cmd: 'mkdir ' + projects.replace('/', '') + '&' +
+				cmd: 'mkdir ' + webistes.replace('/', '') + '&' +
 					(win ?
-					'mklink /J ' + projects.replace('/', path.sep) + config[0].name + ' ' + config[0].dir :
-					'ln -s ' + config[0].dir + ' ' + projects.replace('/', path.sep) + config[0].name)
+					'mklink /J ' + webistes.replace('/', path.sep) + config[0].name + ' ' + config[0].dir :
+					'ln -s ' + config[0].dir + ' ' + webistes.replace('/', path.sep) + config[0].name)
 			},
 			echo_grunt_version: {
 				cmd: function() { return 'echo ' + this.version; }
@@ -175,7 +174,7 @@ module.exports = function (grunt) {
 				grunt.config(['emailer', 'zip', 'cwd'], require('path').dirname(filepath));
 				break;
 			}
-			case 'projects': {
+			case 'webistes': {
 				grunt.log.subhead(filepath + ' updated');
 				break;
 			}
