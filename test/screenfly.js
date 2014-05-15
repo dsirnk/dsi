@@ -10,7 +10,7 @@
 /*jshint scripturl:true*/
 
 // init URLs
-var startUrl = 'http://rdesai:8022/',
+var startUrl = require('../config.json')[0].link,
     hostUrl = '',
     specialUrl = ['#', '?', '&'],
     redundantUrl = ['/', '#', 'javascript:void(0)'],

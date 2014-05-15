@@ -7,10 +7,13 @@ module.exports = function (grunt) {
 				pkg.homepage ? ('* ' + pkg.homepage + '\n') : '' +
 				'* Copyright (c) ' + grunt.template.today("yyyy") + ' ' +
 				pkg.author.name + ';' + ' Licensed MIT */\n',
+		config = grunt.file.readJSON('config.json'),
+		path = require('path'),
 
 		// My custom variables
 		win = process.platform === 'win32',
-		projects = 'projects/**/*.+(css|js|htm|html|cshtml|gif|png|jpg|jpeg)',
+		projects = 'projects/',
+		projectFiles = projects + '**/*.+(css|js|htm|html|cshtml|gif|png|jpg|jpeg)',
 
 		emails = 'emails/',
 		emailFiles = '**/*.+(htm|html)',
@@ -43,7 +46,11 @@ module.exports = function (grunt) {
 		},
 
 		// Before generating any new files, remove any previously-created files.
-		clean: [emailZips, resultShots],
+		clean: {
+			emails: [emailZips],
+			screenshots: [resultShots],
+			projects: [projects]
+		},
 
 		emailer: {
 			zip: {
@@ -57,7 +64,6 @@ module.exports = function (grunt) {
 		phantomcss: {
 			desktop: {
 				options: {
-					// url: 'http://rdesai:8022',
 					screenshots: lastShots + 'desktop/',
 					results: resultShots + 'desktop',
 					viewportSize: [1024, 768]
@@ -66,7 +72,6 @@ module.exports = function (grunt) {
 			},
 			mobile: {
 				options: {
-					// url: 'http://rdesai:8022',
 					screenshots: lastShots + 'mobile/',
 					results: resultShots + 'mobile',
 					viewportSize: [320, 480]
@@ -105,7 +110,7 @@ module.exports = function (grunt) {
 				}
 			},
 			projects: {
-				files: projects,
+				files: projectFiles,
 				tasks: ['phantomcss'],
 				options: {
 					spawn: false
@@ -123,19 +128,15 @@ module.exports = function (grunt) {
 		*/
 
 		exec: {
-			echo: {
-				cmd: 'echo ' + (win ? 'win' : 'mac')
-			},
 			open: {
-				cmd: '#'
-			},
-			remove_logs: {
-				command: 'rm -f *.log',
-				stdout: false,
-				stderr: false
+				cmd: 'echo '
 			},
 			list_files: {
 				cmd: 'ls -l **'
+			},
+			symLink: {
+				cmd: 'mkdir ' + projects.replace('/', '') + '&' +
+					'mklink /J ' + projects.replace('/', path.sep) + config[0].name + ' ' + config[0].dir
 			},
 			echo_grunt_version: {
 				cmd: function() { return 'echo ' + this.version; }
@@ -151,7 +152,12 @@ module.exports = function (grunt) {
 
 					return 'echo ' + formattedName;
 				}
-			}
+			},
+			remove_logs: {
+				command: 'rm -f *.log',
+				stdout: false,
+				stderr: false
+			},
 		}
 	});
 
@@ -186,11 +192,11 @@ module.exports = function (grunt) {
 	grunt.registerTask(
 		'emails',
 		'Running Emailer - zip and upload...',
-		['clean', 'emailer', 'exec:echo', 'watch']
+		['clean', 'emailer', 'watch']
 	);
 	grunt.registerTask(
 		'screenshots',
 		'Taking Screenshots - crawl, screenshot and diff',
-		['clean', 'phantomcss', 'exec:echo', 'watch']
+		['clean', 'exec:symLink', 'phantomcss', 'watch']
 	);
 };

@@ -6,3 +6,18 @@
 
 - emailer (zip and upload)
 - screenfly (crawl, screenshot and diff)
+
+### Screenfly
+
+Add a config.json to the root (where your package.json file is) with the following configuration
+
+```json
+[
+    {
+        "name": "websiteName",
+        "link": "http://website.url",
+        "dir": "path\\to\\website\\dir\\"
+    }
+]
+```
+
