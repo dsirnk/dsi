@@ -136,7 +136,9 @@ module.exports = function (grunt) {
 			},
 			symLink: {
 				cmd: 'mkdir ' + projects.replace('/', '') + '&' +
-					'mklink /J ' + projects.replace('/', path.sep) + config[0].name + ' ' + config[0].dir
+					(win ?
+					'mklink /J ' + projects.replace('/', path.sep) + config[0].name + ' ' + config[0].dir :
+					'ln -s ' + config[0].dir + ' ' + projects.replace('/', path.sep) + config[0].name)
 			},
 			echo_grunt_version: {
 				cmd: function() { return 'echo ' + this.version; }
