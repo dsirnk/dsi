@@ -9,10 +9,12 @@ module.exports = function (grunt) {
 				pkg.author.name + ';' + ' Licensed MIT */\n',
 
 		// My custom variables
+		win = process.platform === 'win32',
 		projects = 'projects/**/*.+(css|js|htm|html|cshtml|gif|png|jpg|jpeg)',
 
-		emails = 'emails/**/*.+(htm|html)',
-		emailZips = emails + '.zip',
+		emails = 'emails/',
+		emailFiles = '**/*.+(htm|html)',
+		emailZips = emails + emailFiles + '.zip',
 
 		screenfly = 'test/**/*screenfly.js',
 
@@ -41,13 +43,13 @@ module.exports = function (grunt) {
 		},
 
 		// Before generating any new files, remove any previously-created files.
-		clean: [emailZips],
+		clean: [emailZips, resultShots],
 
 		emailer: {
 			zip: {
 				expand: true,
-				cwd: '/',
-				src: [emails],
+				cwd: emails,
+				src: [emailFiles],
 				misc: ['**/*.+(jpg|jpeg|gif|png)']
 			}
 		},
@@ -85,11 +87,11 @@ module.exports = function (grunt) {
 				files: '<%= jshint.emailer.src %>',
 				tasks: ['jshint:emailer', 'emailer'],
 				options: {
-					spawn: false
+					// spawn: false
 				}
 			},
 			emails: {
-				files: [emails],
+				files: [emailFiles],
 				tasks: ['emails'],
 				options: {
 					spawn: false
@@ -121,6 +123,9 @@ module.exports = function (grunt) {
 		*/
 
 		exec: {
+			echo: {
+				cmd: 'echo ' + (win ? 'win' : 'mac')
+			},
 			open: {
 				cmd: '#'
 			},
@@ -181,11 +186,11 @@ module.exports = function (grunt) {
 	grunt.registerTask(
 		'emails',
 		'Running Emailer - zip and upload...',
-		['clean', 'emailer', 'watch']
+		['clean', 'emailer', 'exec:echo', 'watch']
 	);
 	grunt.registerTask(
 		'screenshots',
 		'Taking Screenshots - crawl, screenshot and diff',
-		['clean', 'phantomcss', 'watch']
+		['clean', 'phantomcss', 'exec:echo', 'watch']
 	);
 };

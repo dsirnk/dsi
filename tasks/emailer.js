@@ -68,7 +68,7 @@ module.exports = function(grunt) {
 
 				// On file close after writing
 				destStream.on('close', function() {
-					grunt.log.writeln('Created ' + String(dest).cyan + ' (' + exports.getSize(dest) + ')');
+					grunt.log.writeln('Created '.green + String(dest).cyan + ' (' + exports.getSize(dest).yellow + ')');
 					nextFile();
 				});
 
