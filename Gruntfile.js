@@ -134,10 +134,19 @@ module.exports = function (grunt) {
 				cmd: 'ls -l **'
 			},
 			symLink: {
-				cmd: 'mkdir ' + webistes.replace('/', '') + '&' +
-					(win ?
-					'mklink /J ' + webistes.replace('/', path.sep) + config[0].name + ' ' + config[0].dir :
-					'ln -s ' + config[0].dir + ' ' + webistes.replace('/', path.sep) + config[0].name)
+				cmd: function() {
+						var websiteDir = webistes.replace('/', path.sep),
+							websiteName, websiteDest,
+							cmd = 'mkdir ' + websiteDir;
+						config.websites.forEach(function(website) {
+							websiteName =  websiteDir + website.name;
+							websiteDest = website.dir;
+							cmd += (win ?
+								'& mklink /J ' + websiteName + ' ' + websiteDest :
+								'& ln -s ' + websiteDest + ' ' + websiteName);
+						});
+						return cmd;
+					}
 			},
 			echo_grunt_version: {
 				cmd: function() { return 'echo ' + this.version; }
