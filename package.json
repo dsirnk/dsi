@@ -1,36 +1,36 @@
 {
-  "name": "DSI",
-  "version": "0.0.1",
-  "description": "Do Something Interesting / Inovative / Impressing",
-  "main": "Gruntfile.js",
-  "scripts": {
-    "preinstall": "npm i -g casperjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Ronak Desai",
-  "license": "BSD-2-Clause",
-  "dependencies": {
-    "archiver": "~0.4.2",
-    "lazystream": "~0.1.0",
-    "prettysize": "~0.0.2"
-  },
-  "devDependencies": {
-    "grunt": "~0.4.2",
-    "grunt-contrib-jshint": "~0.7.2",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-exec": "~0.4.2",
-    "load-grunt-tasks": "~0.2.0",
-    "grunt-contrib-watch": "~0.5.3",
-    "glob": "~3.2.8",
-    "grunt-contrib-compress": "~0.6.0",
-    "phantomjs": "~1.9.7-5",
-    "grunt-phantomcss": "~0.2.3",
-    "underscore": "~1.6.0"
-  },
-  "peerDependencies": {
-    "grunt": "~0.4.0"
-  },
-  "keywords": [
-    "gruntplugin"
-  ]
+    "name": "DSI",
+    "version": "0.0.1",
+    "description": "Do Something Interesting / Inovative / Impressing",
+    "main": "Gruntfile.js",
+    "scripts": {
+        "preinstall": "npm i -g casperjs",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Ronak Desai",
+    "license": "BSD-2-Clause",
+    "dependencies": {
+        "archiver": "~0.4.2",
+        "lazystream": "~0.1.0",
+        "prettysize": "~0.0.2"
+    },
+    "devDependencies": {
+        "grunt": "~0.4.2",
+        "grunt-contrib-jshint": "~0.7.2",
+        "grunt-contrib-clean": "~0.5.0",
+        "grunt-exec": "~0.4.2",
+        "load-grunt-tasks": "~0.2.0",
+        "grunt-contrib-watch": "~0.5.3",
+        "glob": "~3.2.8",
+        "grunt-contrib-compress": "~0.6.0",
+        "phantomjs": "~1.9.7-5",
+        "grunt-phantomcss": "~0.2.3",
+        "underscore": "~1.6.0"
+    },
+    "peerDependencies": {
+        "grunt": "~0.4.0"
+    },
+    "keywords": [
+        "gruntplugin"
+    ]
 }

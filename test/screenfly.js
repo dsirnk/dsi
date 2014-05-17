@@ -45,7 +45,7 @@ var startUrl = require('../config.json').websites[0].link,
             visitedUrls.push(url);
             onpageUrls = [];
 
-            url = (url.indexOf(hostUrl)!==-1 ? '' : hostUrl) + url;
+            url = (url.indexOf(hostUrl) !== -1 ? '' : hostUrl) + url;
 
             // Open the URL
             casper
@@ -61,10 +61,10 @@ var startUrl = require('../config.json').websites[0].link,
                         return {
                             'host': window.location.origin,
                             'filename': window.location.href
-                                    .toLowerCase()
-                                    .replace(window.location.origin, '')
-                                    .replace(/[^\w]+/g, '-')
-                                    .replace(/^-+|-+$/g, '') || 'home'
+                                .toLowerCase()
+                                .replace(window.location.origin, '')
+                                .replace(/[^\w]+/g, '-')
+                                .replace(/^-+|-+$/g, '') || 'home'
                         };
                     });
                     hostUrl = url.host;
@@ -73,21 +73,21 @@ var startUrl = require('../config.json').websites[0].link,
                         mismatchTolerance: 0.0,
                         hideElements: '.logger',
                         addLabelToFailedImage: true,
-                        onFail: function(test){
+                        onFail: function(test) {
                             console.log('onFail');
                             console.log(test.filename, test.mismatch);
                         },
-                        onPass: function(){
+                        onPass: function() {
                             console.log('onPass');
                             console.log(test.filename);
                         },
-                        onTimeout: function(){
+                        onTimeout: function() {
                             console.log('onTimeout');
                             console.log(test.filename);
                         },
-                        onComplete: function(allTests, noOfFails, noOfErrors){
-                            allTests.forEach(function(test){
-                                if(test.fail){
+                        onComplete: function(allTests, noOfFails, noOfErrors) {
+                            allTests.forEach(function(test) {
+                                if (test.fail) {
                                     console.log('onComplete');
                                     console.log(test.filename, test.mismatch);
                                 }
