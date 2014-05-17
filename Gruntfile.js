@@ -5,8 +5,8 @@ module.exports = function(grunt) {
         path = require('path'),
 
         // My custom variables
-        webistes = 'webistes/',
-        webisteFiles = webistes + '**/*.+(css|js|htm|html|cshtml|gif|png|jpg|jpeg)',
+        websites = 'websites/',
+        websiteFiles = websites + '**/*.+(css|js|htm|html|cshtml|gif|png|jpg|jpeg)',
 
         emails = 'emails/',
         emailFiles = '**/*.+(htm|html)',
@@ -44,7 +44,7 @@ module.exports = function(grunt) {
             emails: [emailZips],
             screenshots: [screenshots],
             // screenshots: [resultShots],
-            webistes: [webistes]
+            websites: [websites]
         },
 
         emailer: {
@@ -106,8 +106,8 @@ module.exports = function(grunt) {
                     spawn: false
                 }
             },
-            webistes: {
-                files: [webisteFiles],
+            websites: {
+                files: [websiteFiles],
                 tasks: ['phantomcss'],
                 options: {
                     spawn: false
@@ -134,7 +134,7 @@ module.exports = function(grunt) {
             symLink: {
                 cmd: function() {
                     var websiteName, websiteDest,
-                        websiteDir = webistes.replace('/', path.sep),
+                        websiteDir = websites.replace('/', path.sep),
                         cmd = 'mkdir ' + websiteDir;
                     config.websites.forEach(function(website) {
                         websiteName = websiteDir + website.name;
@@ -160,7 +160,7 @@ module.exports = function(grunt) {
                     grunt.config(['emailer', 'zip', 'cwd'], require('path').dirname(filepath));
                     break;
                 }
-            case 'webistes':
+            case 'websites':
                 {
                     grunt.log.subhead(filepath + ' updated');
                     break;
