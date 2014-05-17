@@ -13,7 +13,7 @@
 var startUrl = require('../config.json').websites[0].link,
     hostUrl = '',
     specialUrl = ['#', '?', '&'],
-    redundantUrl = ['/', '#', 'javascript:void(0)'],
+    redundantUrl = ['', '/', '#', 'javascript:void(0)'],
 
     // Modules
     _ = require('lodash'),
@@ -57,6 +57,7 @@ var startUrl = require('../config.json').websites[0].link,
                     // Display the URL and status
                     status.current = $this.status().currentHTTPStatus;
                     if (status.current) {
+                        // #todo: use modular code (dependency: oop) to avoid confusion (i.e. implement -> [status.current ? 'proceed' : 'stop'](); )
                         statusStyle.fg = status[status.current] || status['default'];
                         $this.echo($this.colorizer.format(status.current + ' Opened ' + url, statusStyle));
                         // grunt.log.writeln('Opened ' + url);
@@ -104,6 +105,7 @@ var startUrl = require('../config.json').websites[0].link,
                             'body',
                             0,
                             '#fixed-isi',
+                            // #todo: use oop implementation to resolve incorrect filenames
                             url.filename
                         );
 
@@ -115,11 +117,11 @@ var startUrl = require('../config.json').websites[0].link,
                                     // Find links present on this page
                                     $this.evaluate(function() {
                                         return Array.prototype.map.call(document.querySelectorAll('a'), function(e) {
+                                            // #todo: Filtering can / should happen here
                                             return e.getAttribute('href');
                                         });
                                     }),
                                     // Filter redundant and external urls
-
                                     function(l) {
                                         if (redundantUrl.concat(pendingUrls).concat(visitedUrls).indexOf(l) !== -1) return false;
                                         if (specialUrl.indexOf(l[0]) !== -1) {
