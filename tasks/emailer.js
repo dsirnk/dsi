@@ -8,10 +8,10 @@
 
 // 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var glob = require('glob');
-var prettySize = require('prettysize');
+var fs = require('fs'),
+    path = require('path'),
+    glob = require('glob'),
+    prettySize = require('prettysize');
 
 module.exports = function(grunt) {
 

@@ -4,7 +4,7 @@
     "description": "Do Something Interesting / Inovative / Impressing",
     "main": "Gruntfile.js",
     "scripts": {
-        "preinstall": "npm i -g casperjs",
+        "preinstall": "npm i -g nodewebkit casperjs",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Ronak Desai",
@@ -21,11 +21,11 @@
         "grunt-exec": "~0.4.2",
         "load-grunt-tasks": "~0.2.0",
         "grunt-contrib-watch": "~0.5.3",
-        "glob": "~3.2.8",
         "grunt-contrib-compress": "~0.6.0",
         "phantomjs": "~1.9.7-5",
         "grunt-phantomcss": "~0.2.3",
-        "underscore": "~1.6.0"
+        "glob": "~3.2.9",
+        "lodash": "~2.4.1"
     },
     "peerDependencies": {
         "grunt": "~0.4.0"

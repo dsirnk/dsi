@@ -42,7 +42,8 @@ module.exports = function(grunt) {
         // Before generating any new files, remove any previously-created files.
         clean: {
             emails: [emailZips],
-            screenshots: [resultShots],
+            screenshots: [screenshots],
+            // screenshots: [resultShots],
             webistes: [webistes]
         },
 
