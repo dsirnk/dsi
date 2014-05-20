@@ -12,13 +12,13 @@ module.exports = function(grunt) {
         emailFiles = '**/*.+(htm|html)',
         emailZips = emails + emailFiles + '.zip',
 
-        screenfly = 'test/**/*screenfly.js',
+        screenTest = 'test/**/*screenTest.js',
 
         screenshots = 'screenshots/',
         lastShots = screenshots + 'base/',
         resultShots = screenshots + 'results/';
 
-    win = process.platform === 'win32',
+    win = process.platform === 'win32';
 
     // load all npm grunt tasks
     require('load-grunt-tasks')(grunt);
@@ -34,7 +34,7 @@ module.exports = function(grunt) {
                 src: 'tasks/**/*emailer.js',
             },
             phantomcss: {
-                src: screenfly,
+                src: screenTest,
             },
             all: ['*.js']
         },
@@ -42,8 +42,8 @@ module.exports = function(grunt) {
         // Before generating any new files, remove any previously-created files.
         clean: {
             emails: [emailZips],
-            screenshots: [screenshots],
-            // screenshots: [resultShots],
+            // screenshots: [screenshots],
+            screenshots: [resultShots],
             websites: [websites]
         },
 
@@ -63,7 +63,7 @@ module.exports = function(grunt) {
                     results: resultShots,
                     viewportSize: [1024]
                 },
-                src: [screenfly]
+                src: [screenTest]
             },
             /**
 			screenshot_mobile: {
@@ -72,7 +72,7 @@ module.exports = function(grunt) {
 					results: resultShots + 'mobile',
 					viewportSize: [320]
 				},
-				src: [screenfly]
+				src: [screenTest]
 			},
 			/**/
         },
@@ -103,7 +103,7 @@ module.exports = function(grunt) {
                 files: '<%= jshint.phantomcss.src %>',
                 tasks: ['jshint:phantomcss', 'phantomcss'],
                 options: {
-                    spawn: false
+                    // spawn: false
                 }
             },
             websites: {
@@ -121,7 +121,8 @@ module.exports = function(grunt) {
 		__stderr:__ If true, stderr will be printed. Defaults to true.
 		__cwd:__ Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
 		__exitCode:__ The expected exit code, task will fail if the actual exit code doesn't match. Defaults to 0.
-		__callback:__ The callback function passed child_process.exec. Defaults to a noop.
+		__callback:__ The callback function passed child_process.exec. Defaults to a noop
+.
 		*/
 
         exec: {
