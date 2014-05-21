@@ -16,9 +16,9 @@ module.exports = function(grunt) {
 
         screenshots = 'screenshots/',
         lastShots = screenshots + 'base/',
-        resultShots = screenshots + 'results/';
+        resultShots = screenshots + 'results/',
 
-    win = process.platform === 'win32';
+    	win = process.platform === 'win32';
 
     // load all npm grunt tasks
     require('load-grunt-tasks')(grunt);
@@ -42,8 +42,8 @@ module.exports = function(grunt) {
         // Before generating any new files, remove any previously-created files.
         clean: {
             emails: [emailZips],
-            // screenshots: [screenshots],
-            screenshots: [resultShots],
+            screenshots: [screenshots],
+            // screenshots: [resultShots],
             websites: [websites]
         },
 
@@ -65,7 +65,7 @@ module.exports = function(grunt) {
                 },
                 src: [screenTest]
             },
-            /**
+            /**//*
 			screenshot_mobile: {
 				options: {
 					screenshots: lastShots + 'mobile/',
@@ -142,7 +142,7 @@ module.exports = function(grunt) {
                         websiteDest = website.dir;
                         winCmd = 'mklink /J ' + websiteName + ' ' + websiteDest;
                         lnCmd = 'ln -s ' + websiteDest + ' ' + websiteName;
-                        cmd += ' &&\n ' + (win ? winCmd : lnCmd);
+                        cmd += ' && ' + (win ? winCmd : lnCmd);
                     });
                     // return 'echo "' + cmd + '"';
                     return cmd;
