@@ -140,9 +140,11 @@ module.exports = function(grunt) {
                     config.websites.forEach(function(website) {
                         websiteName = websiteDir + website.name;
                         websiteDest = website.dir;
-                        winCmd = 'mklink /J ' + websiteName + ' ' + websiteDest;
-                        lnCmd = 'ln -s ' + websiteDest + ' ' + websiteName;
-                        cmd += ' && ' + (win ? winCmd : lnCmd);
+                        if(websiteDest) {
+	                        winCmd = 'mklink /J ' + websiteName + ' ' + websiteDest;
+	                        lnCmd = 'ln -s ' + websiteDest + ' ' + websiteName;
+	                        cmd += ' && ' + (win ? winCmd : lnCmd);
+	                    }
                     });
                     // return 'echo "' + cmd + '"';
                     return cmd;
