@@ -10,6 +10,7 @@
 /*jshint scripturl:true*/
 
 var startUrl = require('../config.json').websites[0].domain,
+    customUrls = require('../config.json').websites[0].links,
     hostUrl = '',
 
     // URL variables
@@ -68,7 +69,7 @@ Screenfly.prototype = {
                     visitedUrls.push($page._url);
 
                     $page.Screenshot();
-                    $page.Crawl();
+                    // $page.Crawl();
                 } else {
                     casper.echo(casper.colorizer.format('    Escaped ' + $page._url, {
                         fg: 'red',
@@ -85,7 +86,7 @@ Screenfly.prototype = {
         var $page = this;
 
         phantomcss.turnOffAnimations();
-        casper.echo('Taking screenshot and saving to ' + $page._filename);
+        // casper.echo('Taking screenshot and saving to ' + $page._filename);
         phantomcss.screenshot(
             'body',
             0,
@@ -119,7 +120,7 @@ Screenfly.prototype = {
                         }
                         var tempLink = document.createElement('a');
                         tempLink.href = l;
-                        /**//*
+                        /**
                         if (tempLink.hostname === window.location.hostname) casper.echo(casper.colorizer.format('->> Pushed ' + l, {
                             fg: 'magenta',
                             bold: true
@@ -154,34 +155,51 @@ Screenfly.prototype = {
 };
 
 phantomcss.init({
+    failedComparisonsRoot: './failed',
+    addLabelToFailedImage: false,
+    fileNameGetter: function(root, filename) {
+        if (fs.isFile(name + '.png')) {
+            return root + '/final/' + filename + '.png';
+        } else {
+            return root + '/original/' + filename + '.png';
+        }
+    },
     mismatchTolerance: 0.0,
     hideElements: '.logger',
-    addLabelToFailedImage: true,
     onFail: function(test) {
-        console.log('onFail');
-        console.log(test.filename, test.mismatch);
+        console.log(JSON.stringify(test));
     },
-    onPass: function(test) {
-        console.log('onPass');
-        console.log(test.filename);
-    },
-    onTimeout: function(test) {
-        console.log('onTimeout');
-        console.log(test.filename);
-    },
+    onPass: function(test) {},
+    onTimeout: function(test) {},
     onComplete: function(allTests, noOfFails, noOfErrors) {
         allTests.forEach(function(test) {
             if (test.fail) {
-                console.log('onComplete');
                 console.log(test.filename, test.mismatch);
             }
         });
     },
+    outputSettings: {
+        errorColor: {
+            red: 255,
+            green: 255,
+            blue: 0
+        },
+        errorType: 'movement',
+        transparency: 0.3
+    }
 });
+
+
+for (var page in customUrls) {
+    pendingUrls.push({
+        'url': customUrls[page],
+        'filname': page
+    });
+}
 
 new Screenfly(startUrl);
 
-/**//*
+/**
 require('../config.json').websites.forEach(function(website) {
     code for website.domain;
 })
