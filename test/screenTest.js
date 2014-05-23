@@ -20,8 +20,9 @@ var _ = require('lodash'),
 
     statusTheme = {
         200: 'green',
-        404: 'red',
-        'default': 'magenta'
+        404: 'magenta',
+        'error': 'red',
+        'default': 'cyan'
     },
 
     Screenfly = function (options) {
@@ -80,7 +81,7 @@ Screenfly.prototype = {
             }));
         } else {
             casper.echo(casper.colorizer.format('    Escaped ' + page._url, {
-                fg: 'red',
+                fg: statusTheme['error'],
                 bold: true
             }));
         }
@@ -89,7 +90,6 @@ Screenfly.prototype = {
         var page = this;
         if (page._isOpen) {
             phantomcss.turnOffAnimations();
-            // casper.echo('Taking screenshot and saving to ' + page._filename);
             phantomcss.screenshot(
                 'body',
                 0,
@@ -200,6 +200,6 @@ new Screenfly(startUrl);
 
 /**
 require('../config.json').websites.forEach(function(website) {
-    code for website.domain;
+    // code for website.domain;
 })
 /**/
