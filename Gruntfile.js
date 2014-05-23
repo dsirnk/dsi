@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
     // Metadata.
     var config = grunt.file.readJSON('config.json'),
@@ -14,11 +14,11 @@ module.exports = function(grunt) {
 
         screenTest = 'test/**/*screenTest.js',
 
-        screenshots = 'screenshots/',
-        lastShots = screenshots + 'base/',
-        resultShots = screenshots + 'results/',
+        screenshots = 'screenshots',
+        oldShots = screenshots + '-old/',
+        newShots = screenshots + '-new/',
 
-    	win = process.platform === 'win32';
+        win = process.platform === 'win32';
 
     // load all npm grunt tasks
     require('load-grunt-tasks')(grunt);
@@ -42,8 +42,8 @@ module.exports = function(grunt) {
         // Before generating any new files, remove any previously-created files.
         clean: {
             emails: [emailZips],
-            screenshots: [screenshots],
-            // screenshots: [resultShots],
+            // oldShots: [oldShots],
+            newShots: [newShots],
             websites: [websites]
         },
 
@@ -57,24 +57,22 @@ module.exports = function(grunt) {
         },
 
         phantomcss: {
-            screenshot: {
+            desktop: {
                 options: {
-                    screenshots: lastShots,
-                    results: resultShots,
-                    viewportSize: [1024]
+                    screenshots: oldShots + 'desktop/',
+                    results: newShots + 'desktop/',
+                    viewportSize: [1208, 800]
                 },
                 src: [screenTest]
             },
-            /**//*
-			screenshot_mobile: {
-				options: {
-					screenshots: lastShots + 'mobile/',
-					results: resultShots + 'mobile',
-					viewportSize: [320]
-				},
-				src: [screenTest]
-			},
-			/**/
+            mobile: {
+                options: {
+                    screenshots: oldShots + 'mobile/',
+                    results: newShots + 'mobile/',
+                    viewportSize: [320, 240]
+                },
+                src: [screenTest]
+            }
         },
 
         watch: {
@@ -116,14 +114,14 @@ module.exports = function(grunt) {
         },
 
         /* Grunt exec properties
-		__command:__ The shell command to be executed. Must be a string or a function that returns a string. (__alias:__ cmd)
-		__stdout:__ If true, stdout will be printed. Defaults to true.
-		__stderr:__ If true, stderr will be printed. Defaults to true.
-		__cwd:__ Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
-		__exitCode:__ The expected exit code, task will fail if the actual exit code doesn't match. Defaults to 0.
-		__callback:__ The callback function passed child_process.exec. Defaults to a noop
+        __command:__ The shell command to be executed. Must be a string or a function that returns a string. (__alias:__ cmd)
+        __stdout:__ If true, stdout will be printed. Defaults to true.
+        __stderr:__ If true, stderr will be printed. Defaults to true.
+        __cwd:__ Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
+        __exitCode:__ The expected exit code, task will fail if the actual exit code doesn't match. Defaults to 0.
+        __callback:__ The callback function passed child_process.exec. Defaults to a noop
 .
-		*/
+        */
 
         exec: {
             open: {
@@ -133,18 +131,18 @@ module.exports = function(grunt) {
                 cmd: 'ls -l **'
             },
             symLink: {
-                cmd: function() {
+                cmd: function () {
                     var websiteName, websiteDest,
                         websiteDir = websites.replace('/', path.sep),
                         cmd = 'mkdir ' + websiteDir;
-                    config.websites.forEach(function(website) {
+                    config.websites.forEach(function (website) {
                         websiteName = websiteDir + website.name;
                         websiteDest = website.dir;
-                        if(websiteDest) {
-	                        winCmd = 'mklink /J ' + websiteName + ' ' + websiteDest;
-	                        lnCmd = 'ln -s ' + websiteDest + ' ' + websiteName;
-	                        cmd += ' && ' + (win ? winCmd : lnCmd);
-	                    }
+                        if (websiteDest) {
+                            winCmd = 'mklink /J ' + websiteName + ' ' + websiteDest;
+                            lnCmd = 'ln -s ' + websiteDest + ' ' + websiteName;
+                            cmd += ' && ' + (win ? winCmd : lnCmd);
+                        }
                     });
                     // return 'echo "' + cmd + '"';
                     return cmd;
@@ -154,20 +152,20 @@ module.exports = function(grunt) {
     });
 
     // Watch events
-    grunt.event.on('watch', function(action, filepath, target) {
+    grunt.event.on('watch', function (action, filepath, target) {
         // Re-configure tasks to only run on changed file
         switch (target) {
-            case 'emails':
-                {
-                    grunt.config(['exec', 'open', 'cmd'], 'open "' + filepath + '"');
-                    grunt.config(['emailer', 'zip', 'cwd'], require('path').dirname(filepath));
-                    break;
-                }
-            case 'websites':
-                {
-                    grunt.log.subhead(filepath + ' updated');
-                    break;
-                }
+        case 'emails':
+            {
+                grunt.config(['exec', 'open', 'cmd'], 'open "' + filepath + '"');
+                grunt.config(['emailer', 'zip', 'cwd'], require('path').dirname(filepath));
+                break;
+            }
+        case 'websites':
+            {
+                grunt.log.subhead(filepath + ' updated');
+                break;
+            }
         }
     });
 
