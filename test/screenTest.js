@@ -76,12 +76,12 @@ Screenfly.prototype = {
 
             // #todo: use modular code (dependency: oop) to avoid confusion (i.e. implement -> [page._status ? 'proceed' : 'stop'](); )
             casper.echo(casper.colorizer.format(page._status + ' Opened ' + page._url, {
-                fg: statusTheme[page._status] || statusTheme['default'],
+                fg: statusTheme[page._status] || statusTheme.default,
                 bold: true
             }));
         } else {
             casper.echo(casper.colorizer.format('    Escaped ' + page._url, {
-                fg: statusTheme['error'],
+                fg: statusTheme.error,
                 bold: true
             }));
         }
