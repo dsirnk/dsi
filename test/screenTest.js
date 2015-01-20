@@ -38,24 +38,12 @@ var _ = require('lodash'),
         var page = this;
         casper
             .start((page._url.indexOf(hostUrl) !== -1 ? '' : hostUrl) + page._url)
-            .then(function () {
-                page.init();
-            })
-            .then(function () {
-                page.process();
-            })
-            .then(function () {
-                page.screenshot();
-            })
-            .then(function () {
-                page.crawl();
-            })
-            .then(function () {
-                page.next();
-            })
-            .then(function () {
-                page.done();
-            });
+            .then(function () { page.init(); })
+            .then(function () { page.process(); })
+            .then(function () { page.screenshot(); })
+            .then(function () { page.crawl(); })
+            .then(function () { page.next(); })
+            .then(function () { page.done(); });
     };
 
 Screenfly.prototype = {
@@ -104,7 +92,23 @@ Screenfly.prototype = {
         if (page._shouldCrawl) {
             pendingUrls = pendingUrls.concat(
                 _.uniq(
-                    _.filter(page.links, page.filter)
+                    _.filter(page.links(), function (l) {
+                        // Filter redundant and external urls
+                        if (visitedUrls.concat(pendingUrls).indexOf(l) !== -1 || l.match(/^$|^(javascript:\s*void\(0*\))|^\/$|^#$|^tel:/gi)) return false;
+                        if (['#', '?', '&'].indexOf(l[0]) !== -1) {
+                            page._onPageUrls.push();
+                            return false;
+                        }
+                        var tempLink = document.createElement('a');
+                        tempLink.href = l;
+                        /**
+                        if (tempLink.hostname === window.location.hostname) casper.echo(casper.colorizer.format('->> Pushed ' + l, {
+                            fg: 'magenta',
+                            bold: true
+                        }));
+                        /**/
+                        return tempLink.hostname === window.location.hostname;
+                    })
                 )
             );
         }
@@ -119,24 +123,6 @@ Screenfly.prototype = {
             });
         });
     },
-    filter: function (l) {
-        var page = this;
-        // Filter redundant and external urls
-        if (visitedUrls.concat(pendingUrls).indexOf(l) !== -1 || l.match(/^$|^(javascript:\s*void\(0*\))|^\/$|^#$|^tel:/gi)) return false;
-        if (['#', '?', '&'].indexOf(l[0]) !== -1) {
-            page._onPageUrls.push();
-            return false;
-        }
-        var tempLink = document.createElement('a');
-        tempLink.href = l;
-        /**
-        if (tempLink.hostname === window.location.hostname) casper.echo(casper.colorizer.format('->> Pushed ' + l, {
-            fg: 'magenta',
-            bold: true
-        }));
-        /**/
-        return tempLink.hostname === window.location.hostname;
-    },
     next: function () {
         // If there are URLs to be processed
         if ( !! pendingUrls.length) {
@@ -149,15 +135,9 @@ Screenfly.prototype = {
         if (!pendingUrls.length) {
             hostUrl = '';
             casper
-                .then(function () {
-                    phantomcss.compareAll();
-                })
-                .then(function () {
-                    casper.test.done();
-                })
-                .run(function () {
-                    phantom.exit(phantomcss.getExitStatus());
-                });
+                .then(function () { phantomcss.compareAll(); })
+                .then(function () { casper.test.done(); })
+                .run(function () { phantom.exit(phantomcss.getExitStatus()); });
         }
     }
 };
