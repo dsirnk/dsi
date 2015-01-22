@@ -10,9 +10,11 @@
 /*jshint scripturl:true*/
 
 var _ = require('lodash'),
+    querystring = require('querystring'),
     startUrl = require('../config.json').websites[0].domain,
     customUrls = require('../config.json').websites[0].links,
     hostUrl = '',
+    id = 0,
 
     // URL variables
     visitedUrls = [],
@@ -23,6 +25,34 @@ var _ = require('lodash'),
         404: 'magenta',
         'error': 'red',
         'default': 'cyan'
+    },
+    events = {
+        wait: function(query) { delay = query.value; },
+        click: function(query) { casper.mouse.click(query.selector); },
+        hover: function(query) { casper.mouse.move(query.selector); },
+        focus: function(query) { casper.mouse.click(query.selector); },
+        scrolly: function(query) { casper.scrollTo(0, query.value); },
+        addclass: function(query) {
+            if (query.seg[1]) casper.evaluate(function(q) { $(q.selector).addClass(q.seg[1]); }, query);
+            else casper.echo(casper.colorizer.format('Error: expected format for addClass is addClass=selector|className', {
+                fg: statusTheme.error,
+                bold: true
+            }));
+        },
+        addattr: function(query) {
+            if (query.seg[1] && query.seg[2]) casper.evaluate(function(q) { $(q.selector).attr(q.seg[1], q.seg[2]); }, query);
+            else casper.echo(casper.colorizer.format('Error: expected format for addAttr is addAttr=selector|AttributeName|Attribute value', {
+                fg: statusTheme.error,
+                bold: true
+            }));
+        },
+        setcookie: function(query) {
+            document.cookie = query.seg[0] + "=" + '' + "; expires = -1; path=/"
+            document.cookie = query.seg[0] + "=" + query.seg[1] + "; path=/";
+        },
+        deleteCookie: function(name) {
+            events.setcookie(name, '', -1);
+        }
     },
 
     Screenfly = function (options) {
@@ -40,6 +70,7 @@ var _ = require('lodash'),
             .start((page._url.indexOf(hostUrl) !== -1 ? '' : hostUrl) + page._url)
             .then(function () { page.init(); })
             .then(function () { page.process(); })
+            .then(function () { page.simulate(); })
             .then(function () { page.screenshot(); })
             .then(function () { page.crawl(); })
             .then(function () { page.next(); })
@@ -50,11 +81,13 @@ Screenfly.prototype = {
     // Fly by the given URL
     init: function () {
         var page = this;
-        page._filename = page._filename || (casper.getGlobal('location').href.toLowerCase().replace(casper.getGlobal('location').origin, '').replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '') || 'home');
+        page._id = ++id;
+        page._location = casper.getGlobal('location');
+        page._filename = page._filename || (page._id + '.' + (page._location.pathname.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '') || 'home'));
         page._status = casper.status().currentHTTPStatus;
         page._isOpen = !! page._status;
         page._shouldCrawl = page._isOpen && !customUrls;
-        if (!hostUrl) hostUrl = casper.getGlobal('location').origin;
+        if (!hostUrl) hostUrl = page._location.origin;
     },
     process: function () {
         var page = this;
@@ -72,6 +105,16 @@ Screenfly.prototype = {
                 fg: statusTheme.error,
                 bold: true
             }));
+        }
+    },
+    simulate: function () {
+        var page = this;
+        page._qs = querystring.parse(page._location.search.slice(1));
+        for (var e in page._qs) {
+            page._qs[e] = { 'seg' : page._qs[e].split('|') };
+            page._qs[e].selector = (/[\.\[ ]/i.test(page._qs[e].seg[0]) ? '' : '#') + page._qs[e].seg[0];
+
+            (events[e] || function() {})(page._qs[e]);
         }
     },
     screenshot: function () {
@@ -92,42 +135,44 @@ Screenfly.prototype = {
         if (page._shouldCrawl) {
             pendingUrls = pendingUrls.concat(
                 _.uniq(
-                    _.filter(page.links(), function (l) {
-                        // Filter redundant and external urls
-                        if (visitedUrls.concat(pendingUrls).indexOf(l) !== -1 || l.match(/^$|^(javascript:\s*void\(0*\))|^\/$|^#$|^tel:/gi)) return false;
-                        if (['#', '?', '&'].indexOf(l[0]) !== -1) {
-                            page._onPageUrls.push();
-                            return false;
+                    _.filter(
+                        casper.evaluate(function () {
+                            return Array.prototype.map.call(document.querySelectorAll('a'), function (e) {
+                                // #todo: Filtering can / should happen here
+                                return e.getAttribute('href');
+                            });
+                        }), function (l) {
+                            // Filter redundant and external urls
+                            if (visitedUrls.concat(pendingUrls).indexOf(l) !== -1 || l.match(/^$|^(javascript:\s*void\(0*\))|^\/$|^#$|^tel:/gi)) return false;
+                            if (['#', '?', '&'].indexOf(l[0]) !== -1) {
+                                page._onPageUrls.push();
+                                return false;
+                            }
+                            var tempLink = document.createElement('a');
+                            tempLink.href = l;
+                            /**
+                            if (tempLink.hostname === window.location.hostname) casper.echo(casper.colorizer.format('->> Pushed ' + l, {
+                                fg: 'magenta',
+                                bold: true
+                            }));
+                            /**/
+                            return tempLink.hostname === window.location.hostname;
                         }
-                        var tempLink = document.createElement('a');
-                        tempLink.href = l;
-                        /**
-                        if (tempLink.hostname === window.location.hostname) casper.echo(casper.colorizer.format('->> Pushed ' + l, {
-                            fg: 'magenta',
-                            bold: true
-                        }));
-                        /**/
-                        return tempLink.hostname === window.location.hostname;
-                    })
+                    )
                 )
             );
         }
-    },
-    links: function () {
-        var page = this;
-        // Find links present on this page
-        return casper.evaluate(function () {
-            return Array.prototype.map.call(document.querySelectorAll('a'), function (e) {
-                // #todo: Filtering can / should happen here
-                return e.getAttribute('href');
-            });
-        });
     },
     next: function () {
         // If there are URLs to be processed
         if ( !! pendingUrls.length) {
             var nextUrl = pendingUrls.shift();
-            // casper.echo(casper.colorizer.format('<<- Popped ' + nextUrl, { fg: 'blue' }));
+            /**
+            casper.echo(casper.colorizer.format('<<- Popped ' + nextUrl, {
+                fg: 'blue',
+                bold: true
+            }));
+            /**/
             new Screenfly(nextUrl);
         }
     },

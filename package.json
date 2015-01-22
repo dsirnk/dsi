@@ -21,12 +21,13 @@
     "grunt-contrib-compress": "^0.6.1",
     "grunt-contrib-jshint": "^0.7.2",
     "grunt-contrib-watch": "^0.5.3",
-    "grunt-exec": "~0.4.2",
+    "grunt-exec": "^0.4.6",
     "grunt-phantomcss": "^0.2.3",
     "load-grunt-tasks": "^0.2.1",
     "lodash": "~2.4.1",
-    "phantomjs": "~1.9.7-5",
-    "resemblejs": "^1.0.1"
+    "phantomjs": "^1.9.13",
+    "querystring": "^0.2.0",
+    "resemblejs": "^1.2.0"
   },
   "peerDependencies": {
     "grunt": "~0.4.0"
