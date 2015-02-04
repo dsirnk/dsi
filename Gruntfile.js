@@ -12,11 +12,11 @@ module.exports = function (grunt) {
         emailFiles = '**/*.+(htm|html)',
         emailZips = emails + emailFiles + '.zip',
 
-        screenTest = 'test/**/*screenTest.js',
+        screening = 'lib/**/*screening.js',
 
         screenshots = 'screenshots',
-        oldShots = screenshots + '-old/',
-        newShots = screenshots + '-new/',
+        screenOld = screenshots + '-old/',
+        screenNew = screenshots + '-new/',
 
         win = process.platform === 'win32';
 
@@ -34,7 +34,7 @@ module.exports = function (grunt) {
                 src: 'tasks/**/*emailer.js',
             },
             phantomcss: {
-                src: screenTest,
+                src: screening,
             },
             all: ['*.js']
         },
@@ -42,8 +42,8 @@ module.exports = function (grunt) {
         // Before generating any new files, remove any previously-created files.
         clean: {
             emails: [emailZips],
-            // oldShots: [oldShots],
-            newShots: [newShots],
+            screenOld: [screenOld],
+            screenNew: [screenNew],
             websites: [websites]
         },
 
@@ -59,19 +59,19 @@ module.exports = function (grunt) {
         phantomcss: {
             desktop: {
                 options: {
-                    screenshots: oldShots + 'desktop/',
-                    results: newShots + 'desktop/',
+                    screenshots: screenOld + 'desktop/',
+                    results: screenNew + 'desktop/',
                     viewportSize: [1208, 800]
                 },
-                src: [screenTest]
+                src: [screening]
             },
             mobile: {
                 options: {
-                    screenshots: oldShots + 'mobile/',
-                    results: newShots + 'mobile/',
+                    screenshots: screenOld + 'mobile/',
+                    results: screenNew + 'mobile/',
                     viewportSize: [320, 240]
                 },
-                src: [screenTest]
+                src: [screening]
             }
         },
 
@@ -182,7 +182,7 @@ module.exports = function (grunt) {
         'Running Emailer - zip and upload...', ['clean', 'emailer', 'watch']
     );
     grunt.registerTask(
-        'screenshots',
-        'Taking Screenshots - crawl, screenshot and diff', ['clean', 'exec:symLink', 'phantomcss', 'watch']
+        'default',
+        'Taking Screenshots - crawl, screenshot and diff', ['jshint:all', 'clean', 'exec:symLink', 'phantomcss', 'watch']
     );
 };
