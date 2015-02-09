@@ -57,19 +57,21 @@ module.exports = function (grunt) {
         },
 
         phantomcss: {
-            desktop: {
-                options: {
-                    screenshots: screenOld + 'desktop/',
-                    results: screenNew + 'desktop/',
-                    viewportSize: [1208, 800]
-                },
-                src: [screening]
-            },
+            /**
             mobile: {
                 options: {
                     screenshots: screenOld + 'mobile/',
                     results: screenNew + 'mobile/',
                     viewportSize: [320, 240]
+                },
+                src: [screening]
+            },
+            /**/
+            desktop: {
+                options: {
+                    screenshots: screenOld + 'desktop/',
+                    results: screenNew + 'desktop/',
+                    viewportSize: [1208, 800]
                 },
                 src: [screening]
             }
