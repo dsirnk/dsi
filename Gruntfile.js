@@ -121,8 +121,7 @@ module.exports = function (grunt) {
         __stderr:__ If true, stderr will be printed. Defaults to true.
         __cwd:__ Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
         __exitCode:__ The expected exit code, task will fail if the actual exit code doesn't match. Defaults to 0.
-        __callback:__ The callback function passed child_process.exec. Defaults to a noop
-.
+        __callback:__ The callback function passed child_process.exec. Defaults to a noop.
         */
 
         exec: {
@@ -160,7 +159,7 @@ module.exports = function (grunt) {
         case 'emails':
             {
                 grunt.config(['exec', 'open', 'cmd'], 'open "' + filepath + '"');
-                grunt.config(['emailer', 'zip', 'cwd'], require('path').dirname(filepath));
+                grunt.config(['emailer', 'zip', 'cwd'], path.dirname(filepath));
                 break;
             }
         case 'websites':
