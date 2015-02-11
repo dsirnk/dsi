@@ -125,19 +125,13 @@ module.exports = function (grunt) {
         */
 
         exec: {
-            open: {
-                cmd: 'echo '
-            },
-            list_files: {
-                cmd: 'ls -l **'
-            },
             symLink: {
                 cmd: function () {
                     var websiteName, websiteDest,
-                        websiteDir = websites.replace('/', path.sep),
+                        websiteDir = path.resolve(__dirname, websites),
                         cmd = 'mkdir ' + websiteDir;
                     config.websites.forEach(function (website) {
-                        websiteName = websiteDir + website.name;
+                        websiteName = path.resolve(websiteDir, website.name);
                         websiteDest = website.dir;
                         if (websiteDest) {
                             winCmd = 'mklink /J ' + websiteName + ' ' + websiteDest;
@@ -184,6 +178,6 @@ module.exports = function (grunt) {
     );
     grunt.registerTask(
         'default',
-        'Taking Screenshots - crawl, screenshot and diff', ['jshint:all', 'clean', 'exec:symLink', 'phantomcss', 'watch']
+        'Taking Screenshots - crawl, screenshot and diff', ['jshint:all', 'clean', 'exec', 'phantomcss', 'watch']
     );
 };
