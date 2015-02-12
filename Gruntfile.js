@@ -5,18 +5,17 @@ module.exports = function (grunt) {
         path = require('path'),
 
         // My custom variables
-        websites = 'websites/',
-        websiteFiles = websites + '**/*.+(css|js|htm|html|cshtml|gif|png|jpg|jpeg)',
+        websites = 'websites',
+        websiteFiles = path.join(websites, '**/*.+(css|js|htm|html|cshtml|gif|png|jpg|jpeg)'),
 
-        emails = 'emails/',
+        emails = 'emails',
         emailFiles = '**/*.+(htm|html)',
-        emailZips = emails + emailFiles + '.zip',
+        emailZips = path.join(emails, emailFiles + '.zip'),
 
         screening = 'lib/**/*screening.js',
 
-        screenshots = 'screenshots',
-        screenOld = screenshots + '-old/',
-        screenNew = screenshots + '-new/',
+        base = 'base',
+        next = 'next',
 
         win = process.platform === 'win32';
 
@@ -42,8 +41,8 @@ module.exports = function (grunt) {
         // Before generating any new files, remove any previously-created files.
         clean: {
             emails: [emailZips],
-            screenOld: [screenOld],
-            screenNew: [screenNew],
+            // screenOld: ['*/' + base],
+            screenNew: ['*/' + next],
             websites: [websites]
         },
 
@@ -57,24 +56,29 @@ module.exports = function (grunt) {
         },
 
         phantomcss: {
-            /**
-            mobile: {
+            /**/
+            desktop: {
                 options: {
-                    screenshots: screenOld + 'mobile/',
-                    results: screenNew + 'mobile/',
-                    viewportSize: [320, 240]
+                    viewportSize: [1280],
+                    domain: config.websites[0].domain,
+                    links: config.websites[0].links,
+                    screenshots: path.join(config.websites[0].name, base, 'desktop'),
+                    results: path.join(config.websites[0].name, next, 'desktop')
                 },
                 src: [screening]
             },
             /**/
-            desktop: {
+            mobile: {
                 options: {
-                    screenshots: screenOld + 'desktop/',
-                    results: screenNew + 'desktop/',
-                    viewportSize: [1208, 800]
+                    viewportSize: [320],
+                    domain: config.websites[0].domain,
+                    links: config.websites[0].linksMobile,
+                    screenshots: path.join(config.websites[0].name, base, 'mobile'),
+                    results: path.join(config.websites[0].name, next, 'mobile')
                 },
                 src: [screening]
             }
+            /**/
         },
 
         watch: {
