@@ -59,7 +59,7 @@ module.exports = function (grunt) {
             /**/
             desktop: {
                 options: {
-                    viewportSize: [1280],
+                    viewportSize: [1280, 800],
                     domain: config.websites[0].domain,
                     links: config.websites[0].links,
                     screenshots: path.join(config.websites[0].name, base, 'desktop'),
@@ -70,9 +70,9 @@ module.exports = function (grunt) {
             /**/
             mobile: {
                 options: {
-                    viewportSize: [320],
+                    viewportSize: [320, 480],
                     domain: config.websites[0].domain,
-                    links: config.websites[0].linksMobile,
+                    links: config.websites[0].linksMobile || config.websites[0].links,
                     screenshots: path.join(config.websites[0].name, base, 'mobile'),
                     results: path.join(config.websites[0].name, next, 'mobile')
                 },
