@@ -1,7 +1,7 @@
 module.exports = function (grunt) {
 
     // Metadata.
-    var config = grunt.file.readJSON('config.json'),
+    var config = require('./config.json'),
         path = require('path'),
 
         // My custom variables
@@ -56,25 +56,25 @@ module.exports = function (grunt) {
         },
 
         phantomcss: {
-            /**/
+            /**
             desktop: {
                 options: {
                     viewportSize: [1280, 800],
-                    domain: config.websites[0].domain,
-                    links: config.websites[0].links,
-                    screenshots: path.join(config.websites[0].name, base, 'desktop'),
-                    results: path.join(config.websites[0].name, next, 'desktop')
+                    domain: config.websites.brintellix.domain,
+                    links: config.websites.brintellix.pkgs.desktop.links,
+                    screenshots: path.join('brintellix', base, 'desktop'),
+                    results: path.join('brintellix', next, 'desktop')
                 },
                 src: [screening]
             },
-            /**/
+            /**
             mobile: {
                 options: {
                     viewportSize: [320, 480],
-                    domain: config.websites[0].domain,
-                    links: config.websites[0].linksMobile || config.websites[0].links,
-                    screenshots: path.join(config.websites[0].name, base, 'mobile'),
-                    results: path.join(config.websites[0].name, next, 'mobile')
+                    domain: config.websites.brintellix.domain,
+                    links: config.websites.brintellix.pkgs.mobile.links || config.websites.brintellix.pkgs.desktop.links,
+                    screenshots: path.join('brintellix', base, 'mobile'),
+                    results: path.join('brintellix', next, 'mobile')
                 },
                 src: [screening]
             }
@@ -134,21 +134,57 @@ module.exports = function (grunt) {
                     var websiteName, websiteDest,
                         websiteDir = path.resolve(__dirname, websites),
                         cmd = 'mkdir ' + websiteDir;
-                    config.websites.forEach(function (website) {
-                        websiteName = path.resolve(websiteDir, website.name);
-                        websiteDest = website.dir;
+                    for(var webSite in config.websites) {
+                        websiteName = path.resolve(websiteDir, webSite);
+                        websiteDest = config.websites[webSite].dir;
                         if (websiteDest) {
                             winCmd = 'mklink /J ' + websiteName + ' ' + websiteDest;
                             lnCmd = 'ln -s ' + websiteDest + ' ' + websiteName;
                             cmd += ' && ' + (win ? winCmd : lnCmd);
                         }
-                    });
+                    }
                     // return 'echo "' + cmd + '"';
                     return cmd;
                 }
             },
         }
     });
+
+    var viewport = function(viewport) { return [parseInt(viewport) || 1280, 480]; },
+        expand = function(site, conf) {
+            if(conf.pkgs)
+                return (function(pkgs) {
+                    for(var pkg in conf.pkgs) {
+                        pkgs[site + '-' + pkg] = {
+                            options : {
+                                domain       : conf.pkgs[pkg].domain || conf.domain,
+                                links        : conf.pkgs[pkg].links || conf.links,
+                                viewportSize : viewport(conf.pkgs[pkg].viewport),
+                                screenshots  : path.join(site, base, pkg),
+                                results      : path.join(site, next, pkg)
+                            },
+                            src     : [screening]
+                        };
+                    }
+                    return pkgs;
+                })({});
+            else
+                return (function(pkg) {
+                    pkg[site] = {
+                        options : {
+                            domain       : conf.domain,
+                            links        : conf.links,
+                            viewportSize : viewport(conf.viewport),
+                            screenshots  : path.join(webSite, base),
+                            results      : path.join(webSite, next)
+                        },
+                        src     : [screening]
+                    };
+                    return pkg;
+                })({});
+        };
+
+    for(var webSite in config.websites) if(!config.websites[webSite].ignore) grunt.config(['phantomcss'], expand(webSite, config.websites[webSite]));
 
     // Watch events
     grunt.event.on('watch', function (action, filepath, target) {
