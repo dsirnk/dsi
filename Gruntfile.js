@@ -128,7 +128,7 @@ module.exports = function (grunt) {
     for(var site in config.websites) {
         if(!config.websites[site].ignore) {
             var conf = config.websites[site];
-            if(!conf.pkgs) conf.pkgs = {'':''};
+            if(!conf.pkgs) conf.pkgs = {'default':''};
             for(var pkg in conf.pkgs) {
                 gruntPkg[site + '-' + pkg] = {
                     options : {
