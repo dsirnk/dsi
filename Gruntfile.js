@@ -19,14 +19,14 @@ module.exports = function (grunt) {
         jshint  : {
             gruntfile   : { src : 'Gruntfile.js' },
             emailer     : { src : 'tasks/**/*emailer.js' },
-            phantomcss  : { src : screening },
+            screening   : { src : screening },
             all         : ['*.js']
         },
         clean   : {
             emails      : [emailZips],
-            // screenOld   : ['*/' + base],
+            websites    : [websites],
             screenNew   : ['*/' + next],
-            websites    : [websites]
+            screenOld   : (function() { return ~this.process.argv.indexOf('reset') ? ['*/' + base] : []; })()
         },
         emailer : {
             zip : {
@@ -40,7 +40,7 @@ module.exports = function (grunt) {
             gruntfile   : { files: '<%= jshint.gruntfile.src %>'  , tasks: ['jshint:gruntfile']                , options: { spawn: false } },
             emailer     : { files: '<%= jshint.emailer.src %>'    , tasks: ['jshint:emailer', 'emailer']       , options: { spawn: false } },
             emails      : { files: [emailFiles]                   , tasks: ['emails']                          , options: { spawn: false } },
-            phantomcss  : { files: '<%= jshint.phantomcss.src %>' , tasks: ['jshint:phantomcss', 'phantomcss'] , options: { /** spawn: false /**/ } },
+            screening   : { files: '<%= jshint.screening.src %>'  , tasks: ['jshint:screening', 'phantomcss']  , options: { spawn: false } },
             websites    : { files: [websiteFiles]                 , tasks: ['phantomcss']                      , options: { spawn: false } }
         },
         exec    : {
@@ -81,7 +81,7 @@ module.exports = function (grunt) {
                                     }
                                 }
                             }
-                            grunt.config(['phantomcss'], gruntPkg);
+                            if(gruntPkg !== {}) grunt.config(['phantomcss'], gruntPkg);
                         }
             }
         }
@@ -90,7 +90,7 @@ module.exports = function (grunt) {
     grunt.event.on('watch', function (action, filepath, target) {
         // Re-configure tasks to only run on changed file
         switch (target) {
-            case 'emails'   :  grunt.config(['emailer', 'zip', 'cwd'], path.dirname(filepath)); break;
+            case 'emails'   : grunt.config(['emailer', 'zip', 'cwd'], path.dirname(filepath)); break;
             case 'websites' : grunt.log.subhead(filepath + ' updated'); break;
         }
     });
